@@ -56,9 +56,9 @@ curl -fsSL https://github.com/violetaini/chitanda-geoip-api/releases/latest/down
 - API ソースコード
 - `package.json` と `package-lock.json`
 - `data/` 配下の公開データベース
-- install / update / sync スクリプト
-- systemd と Nginx のサンプル
-- 2 台構成の導入ガイド
+- install / update 用のデプロイスクリプト
+- 2 台構成の同期スクリプト
+- 導入・更新に必要な最小ファイル群
 
 ## 自動化
 

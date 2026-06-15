@@ -56,9 +56,9 @@ curl -fsSL https://github.com/violetaini/chitanda-geoip-api/releases/latest/down
 - API 源码
 - `package.json` 和 `package-lock.json`
 - `data/` 下的公开数据库
-- 安装、更新、同步脚本
-- systemd 和 Nginx 示例
-- 两机部署说明
+- 安装和更新所需的部署脚本
+- 两机同步所需的脚本
+- 安装或更新服务所需的最小文件集
 
 ## 自动化
 

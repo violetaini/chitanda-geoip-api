@@ -56,9 +56,9 @@ curl -fsSL https://github.com/violetaini/chitanda-geoip-api/releases/latest/down
 - API source code
 - `package.json` and `package-lock.json`
 - public database files in `data/`
-- install, update, and sync scripts
-- systemd and Nginx examples
-- two-node deployment guide
+- install and update scripts needed for deployment
+- two-node sync scripts for the primary/secondary setup
+- the minimum files required to install or update the service
 
 ## Automation
 

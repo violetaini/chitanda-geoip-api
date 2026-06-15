@@ -134,7 +134,10 @@ install -d -m 0755 "$RELEASES_DIR"
 stage=$(mktemp -d "$RELEASES_DIR/.staging-$tag.XXXXXX")
 rsync -a --delete "$extract_dir/chitanda-geoip-api/" "$stage/"
 
-(cd "$stage" && "$NODE_BIN" --check server.js && "$NODE_BIN" --check scripts/download-db.js)
+(cd "$stage" && "$NODE_BIN" --check server.js)
+if [ -f "$stage/scripts/download-db.js" ]; then
+  (cd "$stage" && "$NODE_BIN" --check scripts/download-db.js)
+fi
 (cd "$stage" && "$NPM_BIN" ci --omit=dev)
 
 previous=$(readlink -f "$CURRENT" 2>/dev/null || true)

@@ -50,6 +50,56 @@ jobs:
       - name: Package service with databases
         run: npm run package:release
 
+      - name: Verify minimal release package
+        run: |
+          tar -tzf release/chitanda-geoip-api-with-data.tar.gz > /tmp/release-files.txt
+          required='
+          chitanda-geoip-api/server.js
+          chitanda-geoip-api/cn-city-centers.js
+          chitanda-geoip-api/global-city-centers.js
+          chitanda-geoip-api/package.json
+          chitanda-geoip-api/package-lock.json
+          chitanda-geoip-api/scripts/domestic-apply-release.sh
+          chitanda-geoip-api/scripts/install-linux.sh
+          chitanda-geoip-api/scripts/sync-domestic-from-current.sh
+          chitanda-geoip-api/scripts/update-linux.sh
+          chitanda-geoip-api/data/geolite2-city-ipv4.mmdb
+          chitanda-geoip-api/data/geolite2-city-ipv6.mmdb
+          chitanda-geoip-api/data/asn.mmdb
+          chitanda-geoip-api/data/geolite2-geo-whois-asn-country.mmdb
+          chitanda-geoip-api/data/ip2region_v4.xdb
+          chitanda-geoip-api/data/ip2region_v6.xdb
+          '
+          for file in $required; do
+            grep -Fx "$file" /tmp/release-files.txt >/dev/null || {
+              echo "missing release file: $file" >&2
+              exit 1
+            }
+          done
+          forbidden='
+          chitanda-geoip-api/README.md
+          chitanda-geoip-api/README_zh.md
+          chitanda-geoip-api/README_zh-TW.md
+          chitanda-geoip-api/README_ja.md
+          chitanda-geoip-api/LICENSE
+          chitanda-geoip-api/docs/avatar.webp
+          chitanda-geoip-api/docs/two-node-sync.md
+          chitanda-geoip-api/scripts/bootstrap-linux.sh
+          chitanda-geoip-api/scripts/download-db.js
+          chitanda-geoip-api/scripts/smoke.js
+          chitanda-geoip-api/deploy/chitanda-geoip-api.service
+          chitanda-geoip-api/deploy/chitanda-geoip-api-update-primary.service
+          chitanda-geoip-api/deploy/chitanda-geoip-api-update.service
+          chitanda-geoip-api/deploy/chitanda-geoip-api-update.timer
+          chitanda-geoip-api/deploy/nginx.example.conf
+          '
+          for file in $forbidden; do
+            if grep -Fx "$file" /tmp/release-files.txt >/dev/null; then
+              echo "forbidden release file: $file" >&2
+              exit 1
+            fi
+          done
+
       - name: Create or update daily release
         env:
           GH_TOKEN: ${{ github.token }}
