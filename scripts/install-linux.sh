@@ -77,7 +77,6 @@ if [ -n "$PACKAGE_ARCHIVE" ]; then
   cp "$PACKAGE_ARCHIVE" "$archive"
   tag="$PACKAGE_TAG"
 else
-  base_url="https://github.com/$REPO/releases/latest/download"
   curl -fsSL --retry 3 --retry-delay 3 \
     -H 'Accept: application/vnd.github+json' \
     -o "$latest_json" "https://api.github.com/repos/$REPO/releases/latest"
@@ -86,6 +85,7 @@ else
     echo "latest release tag not found" >&2
     exit 1
   fi
+  base_url="https://github.com/$REPO/releases/download/$tag"
   curl -fL --retry 3 --retry-delay 3 -o "$archive" "$base_url/chitanda-geoip-api-with-data.tar.gz"
   curl -fL --retry 3 --retry-delay 3 -o "$checksum" "$base_url/chitanda-geoip-api-with-data.tar.gz.sha256"
   (cd "$tmp_dir" && sha256sum -c "$(basename "$checksum")")
