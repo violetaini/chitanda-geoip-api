@@ -11,5 +11,6 @@ Environment=SERVICE_NAME=chitanda-geoip-api.service
 Environment=NODE_BIN=/usr/bin/node
 Environment=NPM_BIN=/usr/bin/npm
 Environment=BASE_URL=http://127.0.0.1:3022
+Environment=KEEP_RELEASES=3
 ExecStart=/usr/local/sbin/chitanda-geoip-api-update
 TimeoutStartSec=20min

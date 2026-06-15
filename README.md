@@ -194,6 +194,8 @@ After `install-linux.sh` runs, the server checks GitHub Releases every day at ab
 8. Runs health and sample GeoIP checks.
 9. Rolls back to the previous release if restart or validation fails.
 
+Successful server updates keep the newest 3 versioned release directories by default. Older release directories are removed after a new version passes validation.
+
 Useful commands:
 
 ```bash
@@ -204,7 +206,7 @@ sudo systemctl start chitanda-geoip-api-update.service
 journalctl -u chitanda-geoip-api-update.service -n 100 --no-pager
 ```
 
-For a two-node setup, run `scripts/update-linux.sh` on the primary node and run `scripts/sync-domestic-from-current.sh` after a successful primary update. The secondary node can use `scripts/domestic-apply-release.sh` as the restricted receiver behind a dedicated SSH user. This avoids forcing a mainland China node to download the large GitHub Release asset directly.
+For a two-node setup, run `scripts/update-linux.sh` on the primary node and run `scripts/sync-domestic-from-current.sh` after a successful primary update. The secondary node can use `scripts/domestic-apply-release.sh` as the restricted receiver behind a dedicated SSH user. Both nodes keep the newest 3 successful release directories by default. This avoids forcing a mainland China node to download the large GitHub Release asset directly.
 
 See [Two-Node GeoIP Release Sync](docs/two-node-sync.md) for the full primary-download, secondary-sync deployment method.
 

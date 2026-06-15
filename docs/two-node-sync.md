@@ -20,6 +20,7 @@ Primary node:
 - Verifies the `.sha256` file.
 - Installs into a versioned release directory.
 - Restarts and validates the local GeoIP API service.
+- Keeps the newest 3 successful release directories.
 - Runs `scripts/sync-domestic-from-current.sh` after a successful local update.
 
 Secondary node:
@@ -30,6 +31,7 @@ Secondary node:
 - Installs into a versioned release directory.
 - Restarts and validates the local GeoIP API service.
 - Rolls back if validation fails.
+- Keeps the newest 3 successful release directories.
 
 ## Prerequisites
 
@@ -217,6 +219,7 @@ Environment=SERVICE_NAME=chitanda-geoip.service
 Environment=NODE_BIN=/usr/bin/node
 Environment=NPM_BIN=/usr/bin/npm
 Environment=BASE_URL=http://127.0.0.1:3022
+Environment=KEEP_RELEASES=3
 Environment=DOMESTIC_HOST=SECONDARY_SERVER_IP
 Environment=DOMESTIC_PORT=22
 Environment=DOMESTIC_USER=geoipsync

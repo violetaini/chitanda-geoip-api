@@ -10,6 +10,7 @@ SERVICE=${SERVICE:-chitanda-geoip.service}
 PORT_BASE=${PORT_BASE:-32220}
 NODE_BIN=${NODE_BIN:-$(command -v node || true)}
 NPM_BIN=${NPM_BIN:-$(command -v npm || true)}
+KEEP_RELEASES=${KEEP_RELEASES:-3}
 
 FILES=(
   geolite2-city-ipv4.mmdb
@@ -151,7 +152,7 @@ restart_and_check() {
 
 cleanup_old() {
   mkdir -p "$RELEASES" "$INCOMING"
-  find "$RELEASES" -mindepth 1 -maxdepth 1 -type d ! -name '.*' | sort | head -n -5 | xargs -r rm -rf
+  find "$RELEASES" -mindepth 1 -maxdepth 1 -type d ! -name '.*' | sort | head -n "-$KEEP_RELEASES" | xargs -r rm -rf
   find "$INCOMING" -maxdepth 1 -type f -name 'chitanda-geoip-*.tgz*' -mtime +7 -delete
 }
 
