@@ -1,0 +1,20 @@
+{
+  "name": "chitanda-geoip-api",
+  "version": "1.0.0",
+  "description": "Self-hosted GeoIP HTTP API compatible with Chitanda IP Site.",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "download-db": "node scripts/download-db.js",
+    "smoke": "node scripts/smoke.js",
+    "package:release": "node scripts/package-release.mjs"
+  },
+  "dependencies": {
+    "ip2region.js": "^3.1.8",
+    "maxmind": "^5.0.6"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

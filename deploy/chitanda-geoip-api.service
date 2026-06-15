@@ -1,0 +1,19 @@
+[Unit]
+Description=Chitanda GeoIP API
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/chitanda-geoip-api
+Environment=HOST=127.0.0.1
+Environment=PORT=3022
+Environment=GEOIP_DATA_DIR=/opt/chitanda-geoip-api/data
+Environment=TRUST_PROXY=1
+ExecStart=/usr/bin/node /opt/chitanda-geoip-api/server.js
+Restart=always
+RestartSec=3
+NoNewPrivileges=true
+
+[Install]
+WantedBy=multi-user.target

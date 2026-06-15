@@ -1,0 +1,69 @@
+name: Build GeoIP Data Release
+
+on:
+  schedule:
+    - cron: '23 2 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: geoip-data-release
+  cancel-in-progress: false
+
+jobs:
+  build-data-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Download public IP databases
+        run: npm run download-db
+
+      - name: Smoke test package before release
+        run: |
+          cleanup() {
+            if [ -f /tmp/chitanda-geoip-api.pid ]; then
+              kill "$(cat /tmp/chitanda-geoip-api.pid)" 2>/dev/null || true
+            fi
+          }
+          trap cleanup EXIT
+          node --check server.js
+          node --check scripts/download-db.js
+          HOST=127.0.0.1 PORT=3022 npm start > /tmp/chitanda-geoip-api.log 2>&1 &
+          echo $! > /tmp/chitanda-geoip-api.pid
+          for i in $(seq 1 40); do curl -fsS http://127.0.0.1:3022/health >/dev/null && break; sleep 0.5; done
+          npm run smoke
+
+      - name: Package service with databases
+        run: npm run package:release
+
+      - name: Create or update daily release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag="data-$(date -u +%Y%m%d)"
+          if gh release view "$tag" >/dev/null 2>&1; then
+            gh release upload "$tag" \
+              release/chitanda-geoip-api-with-data.tar.gz \
+              release/chitanda-geoip-api-with-data.tar.gz.sha256 \
+              --clobber
+          else
+            gh release create "$tag" \
+              release/chitanda-geoip-api-with-data.tar.gz \
+              release/chitanda-geoip-api-with-data.tar.gz.sha256 \
+              --title "GeoIP data $(date -u +%Y-%m-%d)" \
+              --notes "Automated package with public GeoIP databases. Generated from commit ${GITHUB_SHA}."
+          fi
