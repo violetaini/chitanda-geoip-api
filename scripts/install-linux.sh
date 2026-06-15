@@ -33,6 +33,8 @@ if [ -z "$NPM_BIN" ] || [ ! -x "$NPM_BIN" ]; then
   exit 1
 fi
 
+export PATH="$(dirname "$NODE_BIN"):$(dirname "$NPM_BIN"):$PATH"
+
 need() {
   command -v "$1" >/dev/null 2>&1 || {
     echo "$1 is required" >&2
