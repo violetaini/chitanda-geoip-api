@@ -1,0 +1,12 @@
+[Unit]
+Description=Update Chitanda GeoIP API package
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+Environment=REPO=violetaini/chitanda-geoip-api
+Environment=APP_ROOT=/opt/chitanda-geoip-api
+Environment=SERVICE_NAME=chitanda-geoip-api.service
+Environment=BASE_URL=http://127.0.0.1:3022
+ExecStart=/usr/local/sbin/chitanda-geoip-api-update

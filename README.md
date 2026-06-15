@@ -123,12 +123,33 @@ That package contains:
 - public database files under `data/`
 - systemd and Nginx examples
 
-Install on a Linux server:
+Install on a Linux server with the helper script:
 
 ```bash
-sudo mkdir -p /opt/chitanda-geoip-api
-sudo tar -xzf chitanda-geoip-api-with-data.tar.gz -C /opt
-cd /opt/chitanda-geoip-api
+curl -fsSL https://github.com/violetaini/chitanda-geoip-api/releases/latest/download/chitanda-geoip-api-with-data.tar.gz \
+  -o /tmp/chitanda-geoip-api-with-data.tar.gz
+mkdir -p /tmp/chitanda-geoip-api
+tar -xzf /tmp/chitanda-geoip-api-with-data.tar.gz -C /tmp/chitanda-geoip-api --strip-components=1
+sudo bash /tmp/chitanda-geoip-api/scripts/install-linux.sh
+```
+
+The installer downloads the latest Release again, installs versioned packages under `/opt/chitanda-geoip-api/releases`, points `/opt/chitanda-geoip-api/current` at the active release, creates `chitanda-geoip-api.service`, installs the updater, and enables `chitanda-geoip-api-update.timer`.
+
+If Node.js is installed through a non-standard path such as `nvm`, pass explicit paths:
+
+```bash
+sudo NODE_BIN=/root/.nvm/versions/node/v22.16.0/bin/node \
+  NPM_BIN=/root/.nvm/versions/node/v22.16.0/bin/npm \
+  bash /tmp/chitanda-geoip-api/scripts/install-linux.sh
+```
+
+Manual install:
+
+```bash
+sudo mkdir -p /opt/chitanda-geoip-api/releases/manual
+sudo tar -xzf chitanda-geoip-api-with-data.tar.gz -C /opt/chitanda-geoip-api/releases/manual --strip-components=1
+sudo ln -sfn /opt/chitanda-geoip-api/releases/manual /opt/chitanda-geoip-api/current
+cd /opt/chitanda-geoip-api/current
 npm ci --omit=dev
 sudo cp deploy/chitanda-geoip-api.service /etc/systemd/system/
 sudo systemctl daemon-reload
@@ -137,6 +158,39 @@ curl -fsS http://127.0.0.1:3022/health
 ```
 
 Then add an Nginx reverse proxy based on `deploy/nginx.example.conf` and reload Nginx.
+
+## Automatic Server Updates
+
+The release package includes:
+
+```text
+scripts/install-linux.sh
+scripts/update-linux.sh
+deploy/chitanda-geoip-api-update.service
+deploy/chitanda-geoip-api-update.timer
+```
+
+After `install-linux.sh` runs, the server checks GitHub Releases every day at about `04:17` local time, with a randomized delay. The updater:
+
+1. Reads the latest GitHub Release tag.
+2. Downloads `chitanda-geoip-api-with-data.tar.gz` and its `.sha256`.
+3. Verifies the checksum.
+4. Installs the package into a versioned release directory.
+5. Runs syntax checks and `npm ci --omit=dev`.
+6. Switches `/opt/chitanda-geoip-api` to the new release.
+7. Restarts `chitanda-geoip-api.service`.
+8. Runs health and sample GeoIP checks.
+9. Rolls back to the previous release if restart or validation fails.
+
+Useful commands:
+
+```bash
+systemctl status chitanda-geoip-api.service --no-pager
+systemctl status chitanda-geoip-api-update.timer --no-pager
+systemctl list-timers --all chitanda-geoip-api-update.timer
+sudo systemctl start chitanda-geoip-api-update.service
+journalctl -u chitanda-geoip-api-update.service -n 100 --no-pager
+```
 
 ## Configuration
 

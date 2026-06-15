@@ -5,12 +5,12 @@ Wants=network-online.target
 
 [Service]
 Type=simple
-WorkingDirectory=/opt/chitanda-geoip-api
+WorkingDirectory=/opt/chitanda-geoip-api/current
 Environment=HOST=127.0.0.1
 Environment=PORT=3022
-Environment=GEOIP_DATA_DIR=/opt/chitanda-geoip-api/data
+Environment=GEOIP_DATA_DIR=/opt/chitanda-geoip-api/current/data
 Environment=TRUST_PROXY=1
-ExecStart=/usr/bin/node /opt/chitanda-geoip-api/server.js
+ExecStart=/usr/bin/node /opt/chitanda-geoip-api/current/server.js
 Restart=always
 RestartSec=3
 NoNewPrivileges=true
