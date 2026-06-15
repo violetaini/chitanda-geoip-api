@@ -121,6 +121,7 @@ Environment=NODE_BIN=$NODE_BIN
 Environment=NPM_BIN=$NPM_BIN
 Environment=BASE_URL=http://$HOST:$PORT
 ExecStart=$UPDATE_BIN
+TimeoutStartSec=20min
 EOF
 
 cat >"/etc/systemd/system/$TIMER_NAME" <<EOF
