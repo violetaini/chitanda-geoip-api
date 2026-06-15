@@ -20,6 +20,7 @@ const paths = [
   'package-lock.json',
   'README.md',
   'LICENSE',
+  'docs/two-node-sync.md',
   'scripts/bootstrap-linux.sh',
   'scripts/domestic-apply-release.sh',
   'scripts/download-db.js',

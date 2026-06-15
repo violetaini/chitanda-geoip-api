@@ -206,6 +206,8 @@ journalctl -u chitanda-geoip-api-update.service -n 100 --no-pager
 
 For a two-node setup, run `scripts/update-linux.sh` on the primary node and run `scripts/sync-domestic-from-current.sh` after a successful primary update. The secondary node can use `scripts/domestic-apply-release.sh` as the restricted receiver behind a dedicated SSH user. This avoids forcing a mainland China node to download the large GitHub Release asset directly.
 
+See [Two-Node GeoIP Release Sync](docs/two-node-sync.md) for the full primary-download, secondary-sync deployment method.
+
 ## Configuration
 
 Environment variables:
