@@ -164,13 +164,16 @@ Then add an Nginx reverse proxy based on `deploy/nginx.example.conf` and reload 
 The release package includes:
 
 ```text
+scripts/domestic-apply-release.sh
 scripts/install-linux.sh
+scripts/sync-domestic-from-current.sh
 scripts/update-linux.sh
+deploy/chitanda-geoip-api-update-primary.service
 deploy/chitanda-geoip-api-update.service
 deploy/chitanda-geoip-api-update.timer
 ```
 
-After `install-linux.sh` runs, the server checks GitHub Releases every day at about `04:17` local time, with a randomized delay. The updater:
+After `install-linux.sh` runs, the server checks GitHub Releases every day at about `11:17` local time, with a randomized delay. The updater:
 
 1. Reads the latest GitHub Release tag.
 2. Downloads `chitanda-geoip-api-with-data.tar.gz` and its `.sha256`.
@@ -191,6 +194,8 @@ systemctl list-timers --all chitanda-geoip-api-update.timer
 sudo systemctl start chitanda-geoip-api-update.service
 journalctl -u chitanda-geoip-api-update.service -n 100 --no-pager
 ```
+
+For a two-node setup, run `scripts/update-linux.sh` on the primary node and run `scripts/sync-domestic-from-current.sh` after a successful primary update. The secondary node can use `scripts/domestic-apply-release.sh` as the restricted receiver behind a dedicated SSH user. This avoids forcing a mainland China node to download the large GitHub Release asset directly.
 
 ## Configuration
 

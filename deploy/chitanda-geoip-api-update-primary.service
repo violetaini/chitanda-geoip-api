@@ -1,0 +1,18 @@
+[Unit]
+Description=Update primary Chitanda GeoIP API package and sync domestic node
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+Environment=REPO=violetaini/chitanda-geoip-api
+Environment=APP_ROOT=/opt/chitanda-geoip
+Environment=CURRENT=/opt/chitanda-geoip/current
+Environment=RELEASES_DIR=/opt/chitanda-geoip/releases
+Environment=SERVICE_NAME=chitanda-geoip.service
+Environment=NODE_BIN=/root/.nvm/versions/node/v22.16.0/bin/node
+Environment=NPM_BIN=/root/.nvm/versions/node/v22.16.0/bin/npm
+Environment=BASE_URL=http://127.0.0.1:3022
+ExecStart=/usr/local/sbin/chitanda-geoip-api-update
+ExecStartPost=/usr/local/sbin/chitanda-geoip-sync-domestic-from-current
+TimeoutStartSec=30min
