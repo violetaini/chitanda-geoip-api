@@ -123,7 +123,26 @@ That package contains:
 - public database files under `data/`
 - systemd and Nginx examples
 
-Install on a Linux server with the helper script:
+Install on a Linux server with one command:
+
+```bash
+curl -fsSL https://github.com/violetaini/chitanda-geoip-api/releases/latest/download/bootstrap-linux.sh | sudo bash
+```
+
+The bootstrap script downloads the latest Release package, verifies its `.sha256`, extracts it in a temporary directory, and runs the packaged installer.
+
+If Node.js is installed through a non-standard path such as `nvm`, pass explicit paths:
+
+```bash
+curl -fsSL https://github.com/violetaini/chitanda-geoip-api/releases/latest/download/bootstrap-linux.sh \
+  | sudo NODE_BIN=/root/.nvm/versions/node/v22.16.0/bin/node \
+    NPM_BIN=/root/.nvm/versions/node/v22.16.0/bin/npm \
+    bash
+```
+
+The installer places versioned packages under `/opt/chitanda-geoip-api/releases`, points `/opt/chitanda-geoip-api/current` at the active release, creates `chitanda-geoip-api.service`, installs the updater, and enables `chitanda-geoip-api-update.timer`.
+
+Manual install:
 
 ```bash
 curl -fsSL https://github.com/violetaini/chitanda-geoip-api/releases/latest/download/chitanda-geoip-api-with-data.tar.gz \
@@ -132,18 +151,8 @@ mkdir -p /tmp/chitanda-geoip-api
 tar -xzf /tmp/chitanda-geoip-api-with-data.tar.gz -C /tmp/chitanda-geoip-api --strip-components=1
 sudo bash /tmp/chitanda-geoip-api/scripts/install-linux.sh
 ```
-
-The installer downloads the latest Release again, installs versioned packages under `/opt/chitanda-geoip-api/releases`, points `/opt/chitanda-geoip-api/current` at the active release, creates `chitanda-geoip-api.service`, installs the updater, and enables `chitanda-geoip-api-update.timer`.
-
-If Node.js is installed through a non-standard path such as `nvm`, pass explicit paths:
-
-```bash
-sudo NODE_BIN=/root/.nvm/versions/node/v22.16.0/bin/node \
-  NPM_BIN=/root/.nvm/versions/node/v22.16.0/bin/npm \
-  bash /tmp/chitanda-geoip-api/scripts/install-linux.sh
-```
-
-Manual install:
+ 
+Manual systemd setup:
 
 ```bash
 sudo mkdir -p /opt/chitanda-geoip-api/releases/manual

@@ -59,11 +59,13 @@ jobs:
             gh release upload "$tag" \
               release/chitanda-geoip-api-with-data.tar.gz \
               release/chitanda-geoip-api-with-data.tar.gz.sha256 \
+              scripts/bootstrap-linux.sh \
               --clobber
           else
             gh release create "$tag" \
               release/chitanda-geoip-api-with-data.tar.gz \
               release/chitanda-geoip-api-with-data.tar.gz.sha256 \
+              scripts/bootstrap-linux.sh \
               --title "GeoIP data $(date -u +%Y-%m-%d)" \
               --notes "Automated package with public GeoIP databases. Generated from commit ${GITHUB_SHA}."
           fi
