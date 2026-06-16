@@ -81,6 +81,7 @@ curl -fsSL https://github.com/violetaini/chitanda-geoip-api/releases/latest/down
 ## Automation
 
 GitHub Actions builds the package once per day and publishes a new `data-YYYYMMDD` GitHub Release.
+After the Release is created, the workflow updates `.github/badges/release.json` so the README badge shows the published tag without using Shields' GitHub API route.
 
 Server updates are separate:
 

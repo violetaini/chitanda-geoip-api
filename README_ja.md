@@ -81,6 +81,7 @@ curl -fsSL https://github.com/violetaini/chitanda-geoip-api/releases/latest/down
 ## 自動化
 
 GitHub Actions は 1 日 1 回ビルドし、新しい `data-YYYYMMDD` GitHub Release を公開します。
+Release の作成後、ワークフローは `.github/badges/release.json` を更新し、Shields の GitHub API ルートを使わずに README バッジへ公開済み tag を表示します。
 
 サーバー更新は別の処理です:
 
