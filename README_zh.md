@@ -4,13 +4,19 @@
 
 # **Chitanda GeoIP API**
 
-[![Release](https://img.shields.io/github/v/release/violetaini/chitanda-geoip-api?style=for-the-badge)](https://github.com/violetaini/chitanda-geoip-api/releases)
-[![License](https://img.shields.io/badge/License-MIT-22c55e?style=for-the-badge)](LICENSE)
-[![Workflow](https://img.shields.io/badge/GitHub%20Actions-daily%20build-blue?style=for-the-badge)](https://github.com/violetaini/chitanda-geoip-api/actions/workflows/release-data.yml)
+[![Release](https://img.shields.io/endpoint?style=for-the-badge&url=https%3A%2F%2Fraw.githubusercontent.com%2Fvioletaini%2Fchitanda-geoip-api%2Fmain%2F.github%2Fbadges%2Frelease.json&cacheSeconds=3600)](https://github.com/violetaini/chitanda-geoip-api/releases)
+[![Node.js](https://img.shields.io/endpoint?style=for-the-badge&url=https%3A%2F%2Fraw.githubusercontent.com%2Fvioletaini%2Fchitanda-geoip-api%2Fmain%2F.github%2Fbadges%2Fnode.json&cacheSeconds=3600)](package.json)
+[![License](https://img.shields.io/endpoint?style=for-the-badge&url=https%3A%2F%2Fraw.githubusercontent.com%2Fvioletaini%2Fchitanda-geoip-api%2Fmain%2F.github%2Fbadges%2Flicense.json&cacheSeconds=3600)](LICENSE)
+[![Workflow](https://img.shields.io/endpoint?style=for-the-badge&url=https%3A%2F%2Fraw.githubusercontent.com%2Fvioletaini%2Fchitanda-geoip-api%2Fmain%2F.github%2Fbadges%2Fworkflow.json&cacheSeconds=3600)](https://github.com/violetaini/chitanda-geoip-api/actions/workflows/release-data.yml)
 
 </div>
 
-[English](README.md) | [简体中文](README_zh.md) | [繁體中文](README_zh-TW.md) | [日本語](README_ja.md)
+<p align="center">
+  <a href="README.md">English</a> |
+  <a href="README_zh.md">简体中文</a> |
+  <a href="README_zh-TW.md">繁體中文</a> |
+  <a href="README_ja.md">日本語</a>
+</p>
 
 面向 [Chitanda IP Site](https://github.com/violetaini/chitanda-ip-site) 的开源 GeoIP API。
 
@@ -28,11 +34,23 @@
 
 ## 主要功能
 
-- 提供 `/health`、`/myip`、`/geoip/{ip}` 接口
+- 提供 `/health`、`/myip`、`/geoip/{ip}`、`/cdn-node/{provider}` 接口
 - 兼容 `/api/*` 反代路径
 - 下载公开 GeoIP 数据库
 - 打包服务和脚本到 Release
 - 自动清理旧版本目录
+
+## API 组成
+
+- 健康检查：`GET /health` 和 `GET /api/health` 返回服务可用状态和数据库打开时间。
+- 客户端 IP：`GET /myip` 和 `GET /api/myip` 返回访问者 IP。`TRUST_PROXY` 不为 `0` 时，会优先读取常见代理头，再回退到连接地址。
+- GeoIP 查询：`GET /geoip/{ip}`、`GET /geoip?ip=...`、`GET /api/geoip/{ip}`、`GET /api/geoip?ip=...` 返回标准化 IP 信息。
+- 当前访问者查询：`GET /geoip` 和 `GET /api/geoip` 会用访问者 IP 查询，并返回同样的 GeoIP 字段。
+- CDN 节点探测：`GET /cdn-node/{provider}` 和 `GET /api/cdn-node/{provider}` 支持 `fastly`、`akamai`、`virtuozzo`、`ovh`，返回探测到的边缘节点。
+- 返回字段：查询结果可能包含 `ip`、`country`、`country_code`、`region`、`region_code`、`city`、`postal_code`、`asn`、`asn_organization`、`organization`、`isp`、`timezone`、`offset`、`latitude`、`longitude`、`continent_code`。
+- 数据库读取层：启动时打开 IPv4/IPv6 GeoLite2 City MMDB、ASN MMDB、Geo-Whois ASN Country MMDB、ip2region IPv4/IPv6 XDB，并在请求间复用。
+- 回退逻辑：中国大陆 IP 可用 ip2region 补充中文省市和运营商；当数据库缺少坐标时，用中国和全球城市中心表补齐经纬度。
+- 本地化和 HTTP 行为：`Accept-Language` 和 `GEOIP_LANG` 会影响可用的本地化名称；JSON 响应允许跨域，并设置 `cache-control: no-store`。
 
 ## 快速开始
 

@@ -4,13 +4,19 @@
 
 # **Chitanda GeoIP API**
 
-[![Release](https://img.shields.io/github/v/release/violetaini/chitanda-geoip-api?style=for-the-badge)](https://github.com/violetaini/chitanda-geoip-api/releases)
-[![License](https://img.shields.io/badge/License-MIT-22c55e?style=for-the-badge)](LICENSE)
-[![Workflow](https://img.shields.io/badge/GitHub%20Actions-daily%20build-blue?style=for-the-badge)](https://github.com/violetaini/chitanda-geoip-api/actions/workflows/release-data.yml)
+[![Release](https://img.shields.io/endpoint?style=for-the-badge&url=https%3A%2F%2Fraw.githubusercontent.com%2Fvioletaini%2Fchitanda-geoip-api%2Fmain%2F.github%2Fbadges%2Frelease.json&cacheSeconds=3600)](https://github.com/violetaini/chitanda-geoip-api/releases)
+[![Node.js](https://img.shields.io/endpoint?style=for-the-badge&url=https%3A%2F%2Fraw.githubusercontent.com%2Fvioletaini%2Fchitanda-geoip-api%2Fmain%2F.github%2Fbadges%2Fnode.json&cacheSeconds=3600)](package.json)
+[![License](https://img.shields.io/endpoint?style=for-the-badge&url=https%3A%2F%2Fraw.githubusercontent.com%2Fvioletaini%2Fchitanda-geoip-api%2Fmain%2F.github%2Fbadges%2Flicense.json&cacheSeconds=3600)](LICENSE)
+[![Workflow](https://img.shields.io/endpoint?style=for-the-badge&url=https%3A%2F%2Fraw.githubusercontent.com%2Fvioletaini%2Fchitanda-geoip-api%2Fmain%2F.github%2Fbadges%2Fworkflow.json&cacheSeconds=3600)](https://github.com/violetaini/chitanda-geoip-api/actions/workflows/release-data.yml)
 
 </div>
 
-[English](README.md) | [简体中文](README_zh.md) | [繁體中文](README_zh-TW.md) | [日本語](README_ja.md)
+<p align="center">
+  <a href="README.md">English</a> |
+  <a href="README_zh.md">简体中文</a> |
+  <a href="README_zh-TW.md">繁體中文</a> |
+  <a href="README_ja.md">日本語</a>
+</p>
 
 [Chitanda IP Site](https://github.com/violetaini/chitanda-ip-site) 向けのオープンソース GeoIP API です。
 
@@ -28,11 +34,23 @@
 
 ## 主な機能
 
-- `/health`、`/myip`、`/geoip/{ip}` を提供
+- `/health`、`/myip`、`/geoip/{ip}`、`/cdn-node/{provider}` を提供
 - `/api/*` 互換のリバースプロキシ構成
 - 公開 GeoIP データベースのダウンロード
 - サービス用スクリプトを含む Release パッケージ
 - 古いリリースディレクトリの自動整理
+
+## API 構成
+
+- ヘルスチェック: `GET /health` と `GET /api/health` はサービス状態とデータベースを開いた時刻を返します。
+- クライアント IP: `GET /myip` と `GET /api/myip` はアクセス元 IP を返します。`TRUST_PROXY` が `0` でない場合、接続元アドレスより先に一般的なプロキシヘッダーを参照します。
+- GeoIP 検索: `GET /geoip/{ip}`、`GET /geoip?ip=...`、`GET /api/geoip/{ip}`、`GET /api/geoip?ip=...` は正規化された IP 情報を返します。
+- 現在の訪問者検索: `GET /geoip` と `GET /api/geoip` はアクセス元 IP を検索し、同じ GeoIP フィールドを返します。
+- CDN ノード検出: `GET /cdn-node/{provider}` と `GET /api/cdn-node/{provider}` は `fastly`、`akamai`、`virtuozzo`、`ovh` を検出し、見つかったエッジノードを返します。
+- レスポンス項目: 検索結果には `ip`、`country`、`country_code`、`region`、`region_code`、`city`、`postal_code`、`asn`、`asn_organization`、`organization`、`isp`、`timezone`、`offset`、`latitude`、`longitude`、`continent_code` が含まれる場合があります。
+- データベース読み込み層: 起動時に IPv4/IPv6 GeoLite2 City MMDB、ASN MMDB、Geo-Whois ASN Country MMDB、ip2region IPv4/IPv6 XDB を開き、リクエスト間で共有します。
+- フォールバック処理: 中国本土の IP では ip2region で中国語の省・市・ISP 情報を補えます。座標が不足する場合は、中国とグローバルの都市中心テーブルで緯度経度を補います。
+- ローカライズと HTTP 動作: `Accept-Language` と `GEOIP_LANG` は利用可能なローカライズ名に影響します。JSON レスポンスは CORS を許可し、`cache-control: no-store` を設定します。
 
 ## クイックスタート
 

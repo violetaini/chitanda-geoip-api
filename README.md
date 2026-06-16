@@ -4,13 +4,19 @@
 
 # **Chitanda GeoIP API**
 
-[![Release](https://img.shields.io/github/v/release/violetaini/chitanda-geoip-api?style=for-the-badge)](https://github.com/violetaini/chitanda-geoip-api/releases)
-[![License](https://img.shields.io/badge/License-MIT-22c55e?style=for-the-badge)](LICENSE)
-[![Workflow](https://img.shields.io/badge/GitHub%20Actions-daily%20build-blue?style=for-the-badge)](https://github.com/violetaini/chitanda-geoip-api/actions/workflows/release-data.yml)
+[![Release](https://img.shields.io/endpoint?style=for-the-badge&url=https%3A%2F%2Fraw.githubusercontent.com%2Fvioletaini%2Fchitanda-geoip-api%2Fmain%2F.github%2Fbadges%2Frelease.json&cacheSeconds=3600)](https://github.com/violetaini/chitanda-geoip-api/releases)
+[![Node.js](https://img.shields.io/endpoint?style=for-the-badge&url=https%3A%2F%2Fraw.githubusercontent.com%2Fvioletaini%2Fchitanda-geoip-api%2Fmain%2F.github%2Fbadges%2Fnode.json&cacheSeconds=3600)](package.json)
+[![License](https://img.shields.io/endpoint?style=for-the-badge&url=https%3A%2F%2Fraw.githubusercontent.com%2Fvioletaini%2Fchitanda-geoip-api%2Fmain%2F.github%2Fbadges%2Flicense.json&cacheSeconds=3600)](LICENSE)
+[![Workflow](https://img.shields.io/endpoint?style=for-the-badge&url=https%3A%2F%2Fraw.githubusercontent.com%2Fvioletaini%2Fchitanda-geoip-api%2Fmain%2F.github%2Fbadges%2Fworkflow.json&cacheSeconds=3600)](https://github.com/violetaini/chitanda-geoip-api/actions/workflows/release-data.yml)
 
 </div>
 
-[English](README.md) | [简体中文](README_zh.md) | [繁體中文](README_zh-TW.md) | [日本語](README_ja.md)
+<p align="center">
+  <a href="README.md">English</a> |
+  <a href="README_zh.md">简体中文</a> |
+  <a href="README_zh-TW.md">繁體中文</a> |
+  <a href="README_ja.md">日本語</a>
+</p>
 
 Open-source GeoIP API for [Chitanda IP Site](https://github.com/violetaini/chitanda-ip-site).
 
@@ -28,11 +34,23 @@ This repository provides the GeoIP backend used by the front-end project. It can
 
 ## Main Features
 
-- `/health`, `/myip`, and `/geoip/{ip}`
+- `/health`, `/myip`, `/geoip/{ip}`, and `/cdn-node/{provider}`
 - `/api/*` aliases for reverse-proxy deployments
 - public GeoIP database downloads
 - release packaging with service scripts and examples
 - automatic cleanup of older release directories
+
+## API Components
+
+- Health check: `GET /health` and `GET /api/health` return service readiness and the database open time.
+- Client IP endpoint: `GET /myip` and `GET /api/myip` return the caller IP. When `TRUST_PROXY` is not `0`, proxy headers are honored before the socket address.
+- GeoIP lookup: `GET /geoip/{ip}`, `GET /geoip?ip=...`, `GET /api/geoip/{ip}`, and `GET /api/geoip?ip=...` return a normalized IP profile.
+- Current visitor lookup: `GET /geoip` and `GET /api/geoip` resolve the caller IP with the same GeoIP response fields.
+- CDN node probe: `GET /cdn-node/{provider}` and `GET /api/cdn-node/{provider}` probe `fastly`, `akamai`, `virtuozzo`, or `ovh` and return the detected edge node.
+- Response fields: lookup responses may include `ip`, `country`, `country_code`, `region`, `region_code`, `city`, `postal_code`, `asn`, `asn_organization`, `organization`, `isp`, `timezone`, `offset`, `latitude`, `longitude`, and `continent_code`.
+- Database readers: IPv4/IPv6 GeoLite2 City MMDB, ASN MMDB, Geo-Whois ASN Country MMDB, and ip2region IPv4/IPv6 XDB are opened on startup and shared by requests.
+- Fallback logic: Mainland China records can use ip2region for Chinese region/city/ISP text; city-center tables fill missing coordinates for China and global locations.
+- Localization and HTTP behavior: `Accept-Language` and `GEOIP_LANG` control localized names where available; JSON responses are CORS-enabled and use `cache-control: no-store`.
 
 ## Quick Start
 
