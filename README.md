@@ -4,7 +4,7 @@
 
 # **Chitanda GeoIP API**
 
-[![Release](https://img.shields.io/endpoint?style=for-the-badge&url=https%3A%2F%2Fraw.githubusercontent.com%2Fvioletaini%2Fchitanda-geoip-api%2Fmain%2F.github%2Fbadges%2Frelease.json&cacheSeconds=3600)](https://github.com/violetaini/chitanda-geoip-api/releases)
+[![Release](https://img.shields.io/endpoint?style=for-the-badge&url=https%3A%2F%2Fraw.githubusercontent.com%2Fvioletaini%2Fchitanda-geoip-api%2Fmain%2F.github%2Fbadges%2Frelease.json%3Fv%3Ddata-20260615&cacheSeconds=300)](https://github.com/violetaini/chitanda-geoip-api/releases)
 [![Node.js](https://img.shields.io/endpoint?style=for-the-badge&url=https%3A%2F%2Fraw.githubusercontent.com%2Fvioletaini%2Fchitanda-geoip-api%2Fmain%2F.github%2Fbadges%2Fnode.json&cacheSeconds=3600)](package.json)
 [![License](https://img.shields.io/endpoint?style=for-the-badge&url=https%3A%2F%2Fraw.githubusercontent.com%2Fvioletaini%2Fchitanda-geoip-api%2Fmain%2F.github%2Fbadges%2Flicense.json&cacheSeconds=3600)](LICENSE)
 [![Workflow](https://img.shields.io/endpoint?style=for-the-badge&url=https%3A%2F%2Fraw.githubusercontent.com%2Fvioletaini%2Fchitanda-geoip-api%2Fmain%2F.github%2Fbadges%2Fworkflow.json&cacheSeconds=3600)](https://github.com/violetaini/chitanda-geoip-api/actions/workflows/release-data.yml)
@@ -81,7 +81,7 @@ curl -fsSL https://github.com/violetaini/chitanda-geoip-api/releases/latest/down
 ## Automation
 
 GitHub Actions builds the package once per day and publishes a new `data-YYYYMMDD` GitHub Release.
-After the Release is created, the workflow updates `.github/badges/release.json` so the README badge shows the published tag without using Shields' GitHub API route.
+After the Release is created, the workflow updates `.github/badges/release.json` and the README badge cache key so the badge shows the published tag without using Shields' GitHub API route.
 
 Server updates are separate:
 

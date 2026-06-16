@@ -123,26 +123,87 @@ jobs:
           RELEASE_TAG: ${{ steps.create_release.outputs.tag }}
           BADGE_BRANCH: ${{ github.event.repository.default_branch }}
         run: |
+          set -euo pipefail
           branch="${BADGE_BRANCH:-main}"
-          endpoint="repos/${GITHUB_REPOSITORY}/contents/.github/badges/release.json"
-          file="$(mktemp)"
-          gh api "$endpoint?ref=$branch" > "$file"
-          current_message="$(jq -r '.content' "$file" | base64 -d | jq -r '.message // ""')"
-          if [ "$current_message" = "$RELEASE_TAG" ]; then
+          python3 <<'PY'
+          import json
+          import os
+          import pathlib
+          import re
+          import urllib.parse
+
+          tag = os.environ["RELEASE_TAG"]
+          repo = os.environ["GITHUB_REPOSITORY"]
+          branch = os.environ.get("BADGE_BRANCH") or "main"
+          badge = {
+              "schemaVersion": 1,
+              "label": "release",
+              "message": tag,
+              "color": "0ea5e9",
+          }
+          pathlib.Path(".github/badges/release.json").write_text(
+              json.dumps(badge, indent=2, ensure_ascii=False) + "\n",
+              encoding="utf-8",
+          )
+
+          endpoint = f"https://raw.githubusercontent.com/{repo}/{branch}/.github/badges/release.json?v={tag}"
+          encoded_endpoint = urllib.parse.quote(endpoint, safe="")
+          badge_url = (
+              "https://img.shields.io/endpoint?style=for-the-badge"
+              f"&url={encoded_endpoint}&cacheSeconds=300"
+          )
+          pattern = re.compile(
+              r"https://img\.shields\.io/endpoint\?style=for-the-badge&url="
+              r"https%3A%2F%2Fraw\.githubusercontent\.com%2F[^)\s&]+"
+              r"%2F\.github%2Fbadges%2Frelease\.json(?:%3Fv%3D[^)\s&]+)?"
+              r"&cacheSeconds=\d+"
+          )
+          for name in ("README.md", "README_zh.md", "README_zh-TW.md", "README_ja.md"):
+              path = pathlib.Path(name)
+              text = path.read_text(encoding="utf-8")
+              next_text, count = pattern.subn(badge_url, text, count=1)
+              if count != 1:
+                  raise SystemExit(f"release badge URL not found in {name}")
+              path.write_text(next_text, encoding="utf-8")
+          PY
+
+          files=(
+            ".github/badges/release.json"
+            "README.md"
+            "README_zh.md"
+            "README_zh-TW.md"
+            "README_ja.md"
+          )
+          if git diff --quiet -- "${files[@]}"; then
             echo "release badge already shows $RELEASE_TAG"
             exit 0
           fi
-          sha="$(jq -r '.sha' "$file")"
-          payload="$(jq -n --arg tag "$RELEASE_TAG" '{
-            schemaVersion: 1,
-            label: "release",
-            message: $tag,
-            color: "0ea5e9"
-          }')"
-          encoded="$(printf '%s\n' "$payload" | base64 -w0)"
-          gh api --method PUT "$endpoint" \
-            -f message="chore: update release badge for $RELEASE_TAG" \
-            -f content="$encoded" \
-            -f sha="$sha" \
-            -f branch="$branch" \
+
+          base_sha="$(gh api "repos/${GITHUB_REPOSITORY}/git/ref/heads/$branch" --jq '.object.sha')"
+          base_tree="$(gh api "repos/${GITHUB_REPOSITORY}/git/commits/$base_sha" --jq '.tree.sha')"
+          tree_items="[]"
+          for file in "${files[@]}"; do
+            blob_sha="$(
+              jq -n --rawfile content "$file" '{ content: $content, encoding: "utf-8" }' |
+                gh api --method POST "repos/${GITHUB_REPOSITORY}/git/blobs" --input - --jq '.sha'
+            )"
+            tree_items="$(
+              jq --arg path "$file" --arg sha "$blob_sha" \
+                '. + [{ path: $path, mode: "100644", type: "blob", sha: $sha }]' \
+                <<< "$tree_items"
+            )"
+          done
+          new_tree="$(
+            jq -n --arg base_tree "$base_tree" --argjson tree "$tree_items" \
+              '{ base_tree: $base_tree, tree: $tree }' |
+              gh api --method POST "repos/${GITHUB_REPOSITORY}/git/trees" --input - --jq '.sha'
+          )"
+          new_commit="$(
+            jq -n --arg message "chore: update release badge for $RELEASE_TAG" \
+              --arg tree "$new_tree" --arg parent "$base_sha" \
+              '{ message: $message, tree: $tree, parents: [$parent] }' |
+              gh api --method POST "repos/${GITHUB_REPOSITORY}/git/commits" --input - --jq '.sha'
+          )"
+          jq -n --arg sha "$new_commit" '{ sha: $sha, force: false }' |
+            gh api --method PATCH "repos/${GITHUB_REPOSITORY}/git/refs/heads/$branch" --input - \
             --silent

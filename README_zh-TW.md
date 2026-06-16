@@ -4,7 +4,7 @@
 
 # **Chitanda GeoIP API**
 
-[![Release](https://img.shields.io/endpoint?style=for-the-badge&url=https%3A%2F%2Fraw.githubusercontent.com%2Fvioletaini%2Fchitanda-geoip-api%2Fmain%2F.github%2Fbadges%2Frelease.json&cacheSeconds=3600)](https://github.com/violetaini/chitanda-geoip-api/releases)
+[![Release](https://img.shields.io/endpoint?style=for-the-badge&url=https%3A%2F%2Fraw.githubusercontent.com%2Fvioletaini%2Fchitanda-geoip-api%2Fmain%2F.github%2Fbadges%2Frelease.json%3Fv%3Ddata-20260615&cacheSeconds=300)](https://github.com/violetaini/chitanda-geoip-api/releases)
 [![Node.js](https://img.shields.io/endpoint?style=for-the-badge&url=https%3A%2F%2Fraw.githubusercontent.com%2Fvioletaini%2Fchitanda-geoip-api%2Fmain%2F.github%2Fbadges%2Fnode.json&cacheSeconds=3600)](package.json)
 [![License](https://img.shields.io/endpoint?style=for-the-badge&url=https%3A%2F%2Fraw.githubusercontent.com%2Fvioletaini%2Fchitanda-geoip-api%2Fmain%2F.github%2Fbadges%2Flicense.json&cacheSeconds=3600)](LICENSE)
 [![Workflow](https://img.shields.io/endpoint?style=for-the-badge&url=https%3A%2F%2Fraw.githubusercontent.com%2Fvioletaini%2Fchitanda-geoip-api%2Fmain%2F.github%2Fbadges%2Fworkflow.json&cacheSeconds=3600)](https://github.com/violetaini/chitanda-geoip-api/actions/workflows/release-data.yml)
@@ -81,7 +81,7 @@ curl -fsSL https://github.com/violetaini/chitanda-geoip-api/releases/latest/down
 ## 自動化
 
 GitHub Actions 每天建置一次，並發佈新的 `data-YYYYMMDD` GitHub Release。
-Release 建立成功後，工作流程會更新 `.github/badges/release.json`，讓 README 徽章顯示已發佈的 tag，同時避免使用 Shields 的 GitHub API 路由。
+Release 建立成功後，工作流程會更新 `.github/badges/release.json` 和 README 徽章快取參數，讓徽章顯示已發佈的 tag，同時避免使用 Shields 的 GitHub API 路由。
 
 伺服器更新流程是獨立的：
 

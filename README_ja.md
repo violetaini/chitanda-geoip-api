@@ -4,7 +4,7 @@
 
 # **Chitanda GeoIP API**
 
-[![Release](https://img.shields.io/endpoint?style=for-the-badge&url=https%3A%2F%2Fraw.githubusercontent.com%2Fvioletaini%2Fchitanda-geoip-api%2Fmain%2F.github%2Fbadges%2Frelease.json&cacheSeconds=3600)](https://github.com/violetaini/chitanda-geoip-api/releases)
+[![Release](https://img.shields.io/endpoint?style=for-the-badge&url=https%3A%2F%2Fraw.githubusercontent.com%2Fvioletaini%2Fchitanda-geoip-api%2Fmain%2F.github%2Fbadges%2Frelease.json%3Fv%3Ddata-20260615&cacheSeconds=300)](https://github.com/violetaini/chitanda-geoip-api/releases)
 [![Node.js](https://img.shields.io/endpoint?style=for-the-badge&url=https%3A%2F%2Fraw.githubusercontent.com%2Fvioletaini%2Fchitanda-geoip-api%2Fmain%2F.github%2Fbadges%2Fnode.json&cacheSeconds=3600)](package.json)
 [![License](https://img.shields.io/endpoint?style=for-the-badge&url=https%3A%2F%2Fraw.githubusercontent.com%2Fvioletaini%2Fchitanda-geoip-api%2Fmain%2F.github%2Fbadges%2Flicense.json&cacheSeconds=3600)](LICENSE)
 [![Workflow](https://img.shields.io/endpoint?style=for-the-badge&url=https%3A%2F%2Fraw.githubusercontent.com%2Fvioletaini%2Fchitanda-geoip-api%2Fmain%2F.github%2Fbadges%2Fworkflow.json&cacheSeconds=3600)](https://github.com/violetaini/chitanda-geoip-api/actions/workflows/release-data.yml)
@@ -81,7 +81,7 @@ curl -fsSL https://github.com/violetaini/chitanda-geoip-api/releases/latest/down
 ## 自動化
 
 GitHub Actions は 1 日 1 回ビルドし、新しい `data-YYYYMMDD` GitHub Release を公開します。
-Release の作成後、ワークフローは `.github/badges/release.json` を更新し、Shields の GitHub API ルートを使わずに README バッジへ公開済み tag を表示します。
+Release の作成後、ワークフローは `.github/badges/release.json` と README バッジのキャッシュキーを更新し、Shields の GitHub API ルートを使わずに公開済み tag を表示します。
 
 サーバー更新は別の処理です:
 
