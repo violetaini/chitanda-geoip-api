@@ -236,7 +236,7 @@ Create `/etc/systemd/system/chitanda-geoip-api-update.timer`:
 Description=Daily Chitanda GeoIP API package update from GitHub Release
 
 [Timer]
-OnCalendar=*-*-* 11:17:00
+OnCalendar=*-*-* 18:30:00
 RandomizedDelaySec=30m
 Persistent=true
 
@@ -295,7 +295,7 @@ cat /opt/chitanda-geoip/current/.release-tag
 Daily flow:
 
 1. GitHub Actions builds `data-YYYYMMDD`.
-2. Primary timer runs after the GitHub package should already exist.
+2. Primary timer runs in the evening, after the daily GitHub Release should already exist.
 3. Primary downloads `chitanda-geoip-api-with-data.tar.gz` and `.sha256`.
 4. Primary validates and switches local service.
 5. Primary archives its current release and sends it to the secondary node with `rsync --partial --append-verify`.

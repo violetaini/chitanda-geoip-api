@@ -163,7 +163,7 @@ cat >"/etc/systemd/system/$TIMER_NAME" <<EOF
 Description=Daily Chitanda GeoIP API package update
 
 [Timer]
-OnCalendar=*-*-* 11:17:00
+OnCalendar=*-*-* 18:30:00
 RandomizedDelaySec=30m
 Persistent=true
 
