@@ -35,6 +35,7 @@ This repository provides the GeoIP backend used by the front-end project. It can
 ## Main Features
 
 - `/health`, `/myip`, `/geoip/{ip}`, and `/cdn-node/{provider}`
+- plain-text client IP output for CLI probes
 - `/api/*` aliases for reverse-proxy deployments
 - public GeoIP database downloads
 - release packaging with service scripts and examples
@@ -44,6 +45,7 @@ This repository provides the GeoIP backend used by the front-end project. It can
 
 - Health check: `GET /health` and `GET /api/health` return service readiness and the database open time.
 - Client IP endpoint: `GET /myip` and `GET /api/myip` return the caller IP. When `TRUST_PROXY` is not `0`, proxy headers are honored before the socket address.
+- Plain client IP endpoint: `GET /myip?format=text`, `GET /api/myip?format=text`, or `Accept: text/plain` on `/myip` return only the caller IP as `text/plain`.
 - GeoIP lookup: `GET /geoip/{ip}`, `GET /geoip?ip=...`, `GET /api/geoip/{ip}`, and `GET /api/geoip?ip=...` return a normalized IP profile.
 - Current visitor lookup: `GET /geoip` and `GET /api/geoip` resolve the caller IP with the same GeoIP response fields.
 - CDN node probe: `GET /cdn-node/{provider}` and `GET /api/cdn-node/{provider}` probe `fastly`, `akamai`, `virtuozzo`, or `ovh` and return the detected edge node.

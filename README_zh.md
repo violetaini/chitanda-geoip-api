@@ -35,6 +35,7 @@
 ## 主要功能
 
 - 提供 `/health`、`/myip`、`/geoip/{ip}`、`/cdn-node/{provider}` 接口
+- 支持面向命令行探针的纯文本客户端 IP 输出
 - 兼容 `/api/*` 反代路径
 - 下载公开 GeoIP 数据库
 - 打包服务和脚本到 Release
@@ -44,6 +45,7 @@
 
 - 健康检查：`GET /health` 和 `GET /api/health` 返回服务可用状态和数据库打开时间。
 - 客户端 IP：`GET /myip` 和 `GET /api/myip` 返回访问者 IP。`TRUST_PROXY` 不为 `0` 时，会优先读取常见代理头，再回退到连接地址。
+- 纯文本客户端 IP：`GET /myip?format=text`、`GET /api/myip?format=text`，或对 `/myip` 发送 `Accept: text/plain`，只返回 `text/plain` 格式的访问者 IP。
 - GeoIP 查询：`GET /geoip/{ip}`、`GET /geoip?ip=...`、`GET /api/geoip/{ip}`、`GET /api/geoip?ip=...` 返回标准化 IP 信息。
 - 当前访问者查询：`GET /geoip` 和 `GET /api/geoip` 会用访问者 IP 查询，并返回同样的 GeoIP 字段。
 - CDN 节点探测：`GET /cdn-node/{provider}` 和 `GET /api/cdn-node/{provider}` 支持 `fastly`、`akamai`、`virtuozzo`、`ovh`，返回探测到的边缘节点。

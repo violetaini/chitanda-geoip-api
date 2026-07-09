@@ -617,10 +617,33 @@ async function buildGeo(ip, req) {
   return result;
 }
 
+function wantsTextIp(req, url) {
+  const format = url.searchParams.get('format') || url.searchParams.get('output');
+  if (format && /^(text|plain|txt)$/i.test(format)) return true;
+
+  const accept = req.headers.accept;
+  if (typeof accept !== 'string') return false;
+
+  return accept.split(',').some((part) => part.split(';')[0].trim().toLowerCase() === 'text/plain');
+}
+
 function json(res, status, payload) {
   const body = JSON.stringify(payload);
   res.writeHead(status, {
     'content-type': 'application/json; charset=utf-8',
+    'cache-control': 'no-store',
+    'access-control-allow-origin': '*',
+    'access-control-allow-methods': 'GET, OPTIONS',
+    'access-control-allow-headers': '*',
+    'content-length': Buffer.byteLength(body)
+  });
+  res.end(body);
+}
+
+function text(res, status, payload) {
+  const body = `${payload}\n`;
+  res.writeHead(status, {
+    'content-type': 'text/plain; charset=utf-8',
     'cache-control': 'no-store',
     'access-control-allow-origin': '*',
     'access-control-allow-methods': 'GET, OPTIONS',
@@ -702,6 +725,10 @@ async function handle(req, res) {
     const ip = pickIp(req, '');
     if (!isIP(ip)) {
       json(res, 400, { error: 'invalid_ip', ip });
+      return;
+    }
+    if (wantsTextIp(req, url)) {
+      text(res, 200, ip);
       return;
     }
     json(res, 200, { ip });

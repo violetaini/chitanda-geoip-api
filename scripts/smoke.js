@@ -91,3 +91,36 @@ for (const sample of proxyHeaderSamples) {
   }
   console.log(sample.name, JSON.stringify(body));
 }
+
+const plainIpSamples = [
+  {
+    name: 'myip-format-text',
+    path: '/api/myip?format=text',
+    expected: '8.8.8.8',
+    headers: {
+      accept: 'application/json',
+      'ali-real-client-ip': '8.8.8.8'
+    }
+  },
+  {
+    name: 'myip-accept-text',
+    path: '/myip',
+    expected: '1.1.1.1',
+    headers: {
+      accept: 'text/plain',
+      'x-forwarded-for': '1.1.1.1, 211.100.8.31'
+    }
+  }
+];
+
+for (const sample of plainIpSamples) {
+  const response = await fetch(`${base}${sample.path}`, {
+    headers: sample.headers
+  });
+  const body = await response.text();
+  const contentType = response.headers.get('content-type') || '';
+  if (!response.ok || body !== `${sample.expected}\n` || !contentType.toLowerCase().startsWith('text/plain')) {
+    throw new Error(`${sample.name} expected plain ${sample.expected}: ${JSON.stringify({ body, contentType })}`);
+  }
+  console.log(sample.name, JSON.stringify(body));
+}

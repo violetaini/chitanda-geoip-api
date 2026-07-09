@@ -35,6 +35,7 @@
 ## 主な機能
 
 - `/health`、`/myip`、`/geoip/{ip}`、`/cdn-node/{provider}` を提供
+- CLI プローブ向けのプレーンテキスト client IP 出力
 - `/api/*` 互換のリバースプロキシ構成
 - 公開 GeoIP データベースのダウンロード
 - サービス用スクリプトを含む Release パッケージ
@@ -44,6 +45,7 @@
 
 - ヘルスチェック: `GET /health` と `GET /api/health` はサービス状態とデータベースを開いた時刻を返します。
 - クライアント IP: `GET /myip` と `GET /api/myip` はアクセス元 IP を返します。`TRUST_PROXY` が `0` でない場合、接続元アドレスより先に一般的なプロキシヘッダーを参照します。
+- プレーンテキスト client IP: `GET /myip?format=text`、`GET /api/myip?format=text`、または `/myip` に `Accept: text/plain` を送ると、アクセス元 IP だけを `text/plain` で返します。
 - GeoIP 検索: `GET /geoip/{ip}`、`GET /geoip?ip=...`、`GET /api/geoip/{ip}`、`GET /api/geoip?ip=...` は正規化された IP 情報を返します。
 - 現在の訪問者検索: `GET /geoip` と `GET /api/geoip` はアクセス元 IP を検索し、同じ GeoIP フィールドを返します。
 - CDN ノード検出: `GET /cdn-node/{provider}` と `GET /api/cdn-node/{provider}` は `fastly`、`akamai`、`virtuozzo`、`ovh` を検出し、見つかったエッジノードを返します。
